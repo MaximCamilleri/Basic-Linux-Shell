@@ -6,26 +6,15 @@
 #include <errno.h>
 #include "variables.h"
 
-node *initializeEnv(node *head){
+void initializeEnv(node **head){
     node *temp;
     node *tail;
-    temp = createNewNode(getCWD(), "CWD"); 
-    head = temp;
-    tail = temp;
-    insertNode(tail, temp);
-    
-    temp = createNewNode(getUSER(), "USER"); 
-    insertNode(tail, temp);
-    tail = temp;
-    temp = createNewNode(getPATH(), "PATH"); 
-    insertNode(tail, temp);
-    tail = temp;
-    temp = createNewNode(getPROMPT(), "PROMPT"); 
-    insertNode(tail, temp);
-    tail = temp;
-    temp = createNewNode(getHOME(), "HOME"); 
-    insertNode(tail, temp);
-    tail = temp;
+
+    addLinkedList(getCWD(), "CWD", head, &tail);
+    addLinkedList(getUSER(), "USER", head, &tail);
+    addLinkedList(getPATH(), "PATH", head, &tail);
+    addLinkedList(getPROMPT(), "PROMPT", head, &tail);
+    addLinkedList(getHOME(), "HOME", head, &tail);
     // temp = createNewNode(getSHELL(), "SHELL"); 
     // insertNode(tail, temp);
     // tail = temp;
@@ -35,8 +24,6 @@ node *initializeEnv(node *head){
     // temp = createNewNode(getEXITCODE(), "EXITCODE"); 
     // insertNode(tail, temp);
     // tail = temp;
-
-    return head;
 }
 
 char* getCWD(){

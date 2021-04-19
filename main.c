@@ -14,7 +14,7 @@ node *tailCommand = NULL; // end of the linked list
 
 int main(int argc, char **argv[]){
     
-    environHead = initializeEnv(environHead);
+    initializeEnv(&environHead);
     
     input();
     atexit(atExit);
@@ -28,8 +28,8 @@ void atExit(){
 
 void input(){
     char *line;
-    //node *prompt = searchByName(&environHead, "PROMPT");
-    while((line = linenoise(">>>")) != NULL){  // linenoise stores the text entered in stdin, it also prints >>>
+    node *prompt = searchByName(&environHead, "PROMPT");
+    while((line = linenoise(prompt->value)) != NULL){  // linenoise stores the text entered in stdin, it also prints >>>
         if(strcmp(line, "exit") == 0){  // if the user inputed exit then the code will terminate 
             exit(EXIT_SUCCESS);
         }
@@ -78,25 +78,18 @@ void tokenisation(char *input){
             addLinkedList(command, COMMANDNAME, &headCommand, &tailCommand);
             startPointer = i+1;
 
-        }else if(input[i] == 36){
+        }else if(input[i] == 36){ // checks for $
             startPointer = i+1;
-            node *tempPrint;
+            if(input[startPointer] == 123){
+                startPointer++;
+                i = expandVar(startPointer, input, 125);
 
-            for(int k = startPointer; input[k] > 1; k++){
-                if(input[k] == 32 || input[k+1] < 1){
-                    i = k;
-                    if(input[k+1] < 1){
-                        length = (i - startPointer)+1;
-                    }else{
-                        length = (i - startPointer);
-                    }
-                    partition(startPointer, length, input, var);
-                    tempPrint = searchByName(&environHead, var);
-                    addLinkedList(command, COMMANDNAME, &headCommand, &tailCommand);
-                }
+            }else{
+                i = expandVar(startPointer, input, 32);
             }
             
-        }else if(input[i] == 61){
+            
+        }else if(input[i] == 61){ // checks for =
             node *tempReplace;
 
             length = i - startPointer;
@@ -155,19 +148,40 @@ void partition(int start, int lenght, char *input, char command[]){
     }
 }
 
+int expandVar(int startPointer, char* input, char stopCondition){
+    int i;
+    int length;
+    node *tempPrint;
+    char var[COMMANDSIZE];
+    char val[COMMANDSIZE];
 
-void addLinkedList(char *value, char *name, node** head, node** tail){
-    node *temp;
-
-    temp = createNewNode(value, name); // creats a new node with the value of placholder
-    if(*head == NULL)
-    {
-        *head = temp;
-        *tail = temp;
+    for(int k = startPointer; input[k] > 1; k++){
+        if(input[k] == stopCondition || input[k+1] < 1){
+            i = k;
+            
+            if(input[k+1] < 1){
+                length = (i - startPointer)+1;
+            }else{
+                length = (i - startPointer);
+            }
+            if(input[k] == 125){
+                length--;
+            }
+            partition(startPointer, length, input, var);
+            tempPrint = searchByName(&environHead, var);
+            if(tempPrint == NULL){
+                tempPrint = searchByName(&headVar, var);
+                if(tempPrint != NULL){
+                    addLinkedList(tempPrint->value, COMMANDNAME, &headCommand, &tailCommand);  
+                }else{
+                    printf("Variable [%s] was not found", var);
+                }
+            }else{
+                addLinkedList(tempPrint->value, COMMANDNAME, &headCommand, &tailCommand);  
+            }
+        }
     }
-    else{
-        insertNode(*tail, temp); //adds the node to the linked list 
-        *tail = temp;
-    }
+    return i;
 }
+
 

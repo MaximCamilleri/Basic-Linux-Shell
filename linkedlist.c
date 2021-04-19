@@ -1,6 +1,6 @@
 #include "linkedlist.h"
 
-node *createNewNode(char *value, char *name){
+node* createNewNode(char *value, char *name){
     node *result = malloc(sizeof(node));
     result->value = malloc(strlen(value) + 1);
     result->name = malloc(strlen(name) + 1);
@@ -42,7 +42,7 @@ node* searchByValue(node **head, char *value){
     node *temp = *head;
 
     while(temp != NULL){
-        if(strcmp(temp->value, value)){
+        if(strcmp(temp->value, value) == 0){
             return temp;
         }
         temp = temp->next;
@@ -54,7 +54,7 @@ node* searchByName(node **head, char *name){
     node *temp = *head;
 
     while(temp != NULL){
-        if(strcmp(temp->name, name)){
+        if(strcmp(temp->name, name) == 0){
             return temp;
         }
         temp = temp->next;
@@ -66,4 +66,19 @@ void replaceValue(node *node, char *value){
     free(node->value);
     node->value = malloc(strlen(value)+1);
     strcpy(node->value, value);
+}
+
+void addLinkedList(char *value, char *name, node** head, node** tail){
+    node *temp;
+
+    temp = createNewNode(value, name); // creats a new node with the value of placholder
+    if(*head == NULL)
+    {
+        *head = temp;
+        *tail = temp;
+    }
+    else{
+        insertNode(*tail, temp); //adds the node to the linked list 
+        *tail = temp;
+    }
 }
