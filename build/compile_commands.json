@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/max/assignment/build",
+  "command": "/bin/gcc-9   -g   -std=gnu11 -o CMakeFiles/main.dir/main.c.o   -c /home/max/assignment/main.c",
+  "file": "/home/max/assignment/main.c"
+}
+]

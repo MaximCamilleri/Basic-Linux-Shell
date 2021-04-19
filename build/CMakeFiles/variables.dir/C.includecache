@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/max/assignment/linkedlist.c
+linkedlist.h
+/home/max/assignment/linkedlist.h
+
+/home/max/assignment/linkedlist.h
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+
+/home/max/assignment/variables.c
+stdio.h
+-
+unistd.h
+-
+string.h
+-
+stdlib.h
+-
+limits.h
+-
+errno.h
+-
+variables.h
+/home/max/assignment/variables.h
+
+/home/max/assignment/variables.h
+linkedlist.c
+/home/max/assignment/linkedlist.c
+
