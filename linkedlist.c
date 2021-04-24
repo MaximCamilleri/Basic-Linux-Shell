@@ -25,6 +25,18 @@ void printlist(node *head){
     printf("\n");
 }
 
+void printNameValues(node *head){
+    node *temp = head;
+    while(temp != NULL){
+        printNameValue(temp);
+        temp = temp->next;
+    }
+}
+
+void printNameValue(node *temp){
+    printf("%s = %s\n", temp->name, temp->value);
+}
+
 void destroy(node **head){
     node *temp = *head;
     node *next;
@@ -80,5 +92,27 @@ void addLinkedList(char *value, char *name, node** head, node** tail){
     else{
         insertNode(*tail, temp); //adds the node to the linked list 
         *tail = temp;
+    }
+}
+
+void deleteNode(node **head, char *value){
+    node *temp = *head;
+    node *prev = NULL;
+    while(temp != NULL){
+        if(strcmp(temp->name, value) == 0){
+            if(temp == *head){
+                if(temp->next == NULL){
+                    *head = NULL;
+                }else{
+                    *head = temp->next;
+                }
+                free(temp);
+            }else{
+                prev->next = temp->next;
+                free(temp);
+            }
+        }
+        prev = temp;
+        temp = temp->next;
     }
 }

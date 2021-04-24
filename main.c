@@ -13,7 +13,8 @@ node *headCommand = NULL; // start of the linked list
 node *tailCommand = NULL; // end of the linked list
 
 int main(int argc, char **argv[]){
-    
+    setvbuf(stdout, NULL, _IONBF, 0);
+
     initializeEnv(&environHead);
     
     input();
@@ -28,15 +29,23 @@ void atExit(){
 
 void input(){
     char *line;
+    printf("\033[32m");
+    fflush(stdout);
     node *prompt = searchByName(&environHead, "PROMPT");
     while((line = linenoise(prompt->value)) != NULL){  // linenoise stores the text entered in stdin, it also prints >>>
+        printf("\033[00m");
+        fflush(stdout);
         if(strcmp(line, "exit") == 0){  // if the user inputed exit then the code will terminate 
             exit(EXIT_SUCCESS);
         }
+
         tokenisation(line);
+        commands(headCommand);
 
         destroy(&headCommand); //deallocate the link list from the heap after it is done being used
         linenoiseFree(line); //deallocate the linenoise form the heap
+        printf("\033[32m");
+        fflush(stdout);
     }
 }
 
@@ -70,7 +79,7 @@ void tokenisation(char *input){
                     break;
                 }
             }
-            i--; // dicriment i to check the character that is directly after the closing " that was just deleted
+            i--; // decriment i to check the character that is directly after the closing " that was just deleted
             
         }else if(input[i] == 32){ // checks for space
             length = i - startPointer;
@@ -172,16 +181,101 @@ int expandVar(int startPointer, char* input, char stopCondition){
             if(tempPrint == NULL){
                 tempPrint = searchByName(&headVar, var);
                 if(tempPrint != NULL){
-                    addLinkedList(tempPrint->value, COMMANDNAME, &headCommand, &tailCommand);  
+                    addLinkedList(tempPrint->value, var, &headCommand, &tailCommand);  
                 }else{
+                    printf("\033[31m");
+                    fflush(stdout);
                     printf("Variable [%s] was not found", var);
+                    printf("\033[00m");
+                    fflush(stdout);
                 }
             }else{
-                addLinkedList(tempPrint->value, COMMANDNAME, &headCommand, &tailCommand);  
+                addLinkedList(tempPrint->value, var, &headCommand, &tailCommand);  
             }
         }
     }
     return i;
 }
 
+void commands(node *head){
+    node *temp = head;
+    node *temp2 = NULL;
+    node *replaceTemp;
+    int success;
+    while(temp != NULL){
+        if(strcmp(temp->value, "cd") == 0)
+        {
+            chdir("..");
+            replaceTemp = searchByName(&environHead, "CWD");
+            replaceValue(replaceTemp, getCWD());
+        }else if(strcmp(temp->value, "echo") == 0){
+            while(temp->next != NULL){
+                temp = temp->next;
+                fprintf(stdout, "%s ", temp->value); 
+            }
+            printf("\n");
 
+        }else if(strcmp(temp->value, "showvar") == 0){
+            if(temp->next != NULL){
+                temp2 = searchByName(&headVar, temp->next->value);
+                if(temp2 == NULL){
+                        printf("\033[31m");
+                        printf("Variable [%s] was not found\n", temp->next->value);
+                        printf("\033[00m");
+                }else{
+                    printNameValue(temp2);
+                }
+            }else{
+                
+                printNameValues(headVar);
+            }
+        }else if(strcmp(temp->value, "showenv") == 0){
+            if(temp->next != NULL){
+                temp2 = searchByName(&environHead, temp->next->value);
+                if(temp2 == NULL){
+                    printf("\033[31m");
+                    printf("Variable [%s] was not found\n", temp->next->value);
+                    printf("\033[00m");
+                }else{
+                    printNameValue(temp2);
+                }
+            }else{
+                printNameValues(environHead);
+            }
+
+
+        }else if(strcmp(temp->value, "export") == 0){
+            if(temp->next != NULL){
+                temp2 = searchByName(&environHead, temp->next->value);
+                if (temp2 == NULL){
+                    temp2 = searchByName(&headVar, temp->next->value);
+                    if(temp2 == NULL){
+                        printError("The variable does not exist");
+                    }else{
+                        setenv(temp2->name, temp2->value, 1);
+                    }
+                    
+                }else{
+                    printError("The variable is already in the environment");
+                }
+                
+            }else{
+                printError("No variable was specified");
+            }
+        }else if(strcmp(temp->value, "unset") == 0){
+            if(temp->next != NULL){
+                unsetenv(temp->next->value);
+                deleteNode(&headVar, temp->next->value);
+            }else{
+                printError("No variable was specified");
+            }
+        }
+        temp = temp->next;
+    }
+}
+
+void printError(char *error){
+    printf("\033[31m");
+    printf("%s\n", error);
+    printf("\033[00m");
+}

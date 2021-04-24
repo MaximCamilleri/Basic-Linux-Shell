@@ -96,3 +96,11 @@ int getEXITCODE(){
     return error;
 }
 
+void getENV(char *input){
+    char *ret;
+    if(ret = getenv(input)){
+        return ret;
+    }else{
+        return NULL;
+    }
+}

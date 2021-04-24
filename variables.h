@@ -8,3 +8,4 @@ char* getHOME();
 char* getSHELL();
 void getTERMINAL();
 int getEXITCODE();
+void getENV(char *input);
