@@ -1,5 +1,5 @@
 #include "linkedlist.c"
-void initializeEnv(node **head);
+void initializeEnv(node **head, node **tail);
 char* getCWD();
 char* getUSER();
 char* getPATH();
@@ -8,4 +8,5 @@ char* getHOME();
 char* getSHELL();
 void getTERMINAL();
 int getEXITCODE();
-void getENV(char *input);
+bool printEnv(char* envName, char* filename, int redirect);
+char* getENV(char *input);

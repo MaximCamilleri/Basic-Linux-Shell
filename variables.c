@@ -6,97 +6,21 @@
 #include <errno.h>
 #include "variables.h"
 
-void initializeEnv(node **head){
+extern char **environ;
+
+void initializeEnv(node **head, node **tail){
     node *temp;
-    node *tail;
-
-    addLinkedList(getCWD(), "CWD", head, &tail);
-    addLinkedList(getUSER(), "USER", head, &tail);
-    addLinkedList(getPATH(), "PATH", head, &tail);
-    addLinkedList(getPROMPT(), "PROMPT", head, &tail);
-    addLinkedList(getHOME(), "HOME", head, &tail);
-    // temp = createNewNode(getSHELL(), "SHELL"); 
-    // insertNode(tail, temp);
-    // tail = temp;
-    //temp = createNewNode(getTERMINAL(), "TERMINAL"); 
-    //insertNode(tail, temp);
-    //tail = temp;
-    // temp = createNewNode(getEXITCODE(), "EXITCODE"); 
-    // insertNode(tail, temp);
-    // tail = temp;
-}
-
-char* getCWD(){
     char *cwd;
-    if(cwd = getenv("PWD")){
-        return cwd;
-    }
-    else{
-        return NULL;
-    }
+    addLinkedList(cwd = getENV("PWD"), "CWD", head, tail);
+    addLinkedList(getENV("USER"), "USER", head, tail);
+    addLinkedList(getENV("PATH"), "PATH", head, tail);
+    addLinkedList(getPROMPT(cwd), "PROMPT", head, tail);
+    addLinkedList(getENV("HOME"), "HOME", head, tail);
+    addLinkedList(getENV("SHELL"), "SHELL", head, tail);
+    addLinkedList(ttyname(STDIN_FILENO), "TERMINAL", head, tail);
 }
 
-char* getUSER(){
-    char *user;
-    if(user = getenv("USER")){
-        return user;
-    }
-    else{
-        return NULL;
-    }
-}
-
-char* getPATH(){
-    char *path;
-    if(path = getenv("PATH")){
-        return path;
-    }
-    else{
-        return NULL;
-    }
-}
-
-char* getPROMPT(){
-    return ">>>";
-}
-
-char* getHOME(){
-    char *home;
-    if(home = getenv("HOME")){
-        return home;
-    }
-    else{
-        return NULL;
-    }
-}
-
-char* getSHELL(){ // no idea how to do this
-    char *home;
-    if(home = getenv("HOME")){
-        printf("%s\n", home);
-    }
-    else{
-        return NULL;
-    }
-}
-
-void getTERMINAL(){
-    if(fork() == 0){
-        char exec_msg[64];
-        if(execlp("tty", "tty", NULL) == -1){
-            snprintf(exec_msg, sizeof(exec_msg), "Failed to run [%d]", errno);
-            perror("Failed to exec");
-            exit(EXIT_FAILURE);
-        }
-    }
-}
-
-int getEXITCODE(){
-    int error = errno;
-    return error;
-}
-
-void getENV(char *input){
+char* getENV(char *input){
     char *ret;
     if(ret = getenv(input)){
         return ret;
@@ -104,3 +28,16 @@ void getENV(char *input){
         return NULL;
     }
 }
+
+char* getPROMPT(char *cwd){
+    char s[100];
+    char *prompt = strcat(cwd, " >");
+    return prompt;
+}
+
+int getEXITCODE(){
+    int error = errno;
+    return error;
+}
+
+
