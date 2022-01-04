@@ -269,11 +269,9 @@ int expandVariables(char* input, int startPointer, node **head, node** tail){
     for(int i = 0; i < 200; i++){
         final[i] = 0;
     }
-
+    int tempStartPointer = startPointer;
     while(input[startPointer] != 36){
-        final[finalCounter] = input[startPointer];
         startPointer++;
-        finalCounter++;
     }
 
     if(input[startPointer + 1] == 123){
@@ -294,24 +292,34 @@ int expandVariables(char* input, int startPointer, node **head, node** tail){
     int lenght = positionCounter - varPointer;
     partition(varPointer, lenght, input, var);
     node *varNode = searchByName(&shellVarHead, var);
-    char *val = varNode->value;
-    int varCounter = 0;
-    for(int i = 0; val[i] > 1; i++){
-        final[finalCounter] = val[varCounter];
-        finalCounter++;
-        varCounter++;
-    }
-
-    if(input[positionCounter] == 125){
-        positionCounter++;
-        while(input[positionCounter] != 124 && input[positionCounter] != 59 && input[positionCounter] != 60 && 
-        input[positionCounter] != 62 && input[positionCounter] != 32 && input[positionCounter] != 9 && input[positionCounter] > 1){
-            final[finalCounter] = input[positionCounter];
-            positionCounter++;
+    if(varNode != NULL){
+        char *val = varNode->value;
+        int varCounter = 0;
+        while(input[tempStartPointer] != 36){
+            final[finalCounter] = input[tempStartPointer];
+            tempStartPointer++;
             finalCounter++;
         }
+        for(int i = 0; val[i] > 1; i++){
+            final[finalCounter] = val[varCounter];
+            finalCounter++;
+            varCounter++;
+        }
+
+        if(input[positionCounter] == 125){
+            positionCounter++;
+            while(input[positionCounter] != 124 && input[positionCounter] != 59 && input[positionCounter] != 60 && 
+            input[positionCounter] != 62 && input[positionCounter] != 32 && input[positionCounter] != 9 && input[positionCounter] > 1){
+                final[finalCounter] = input[positionCounter];
+                positionCounter++;
+                finalCounter++;
+            }
+        }
+        addLinkedList(final, COMMANDNAME, head, tail);
+    }else{
+        printError("The variable was not found");
+        
     }
-    addLinkedList(final, COMMANDNAME, head, tail);
     return positionCounter;
 
 }
@@ -425,6 +433,11 @@ void partition(int start, int lenght, char *input, char command[]){
 //commands
 //
 
+void updateExitcode(){
+    node* replaceTemp = searchByName(&shellVarHead, "EXITCODE");
+    replaceValue(replaceTemp, strerror(errno));
+}
+
 void cd(char *command, bool popd){
     node *replaceTemp;
     char *cwd;
@@ -434,7 +447,11 @@ void cd(char *command, bool popd){
     if(command == NULL){
         printError("No variable was specified");
     }else{
-        chdir(command);
+        if(chdir(command) == -1){
+            printError("The path does not exist");
+            updateExitcode();
+            return;
+        }
         replaceTemp = searchByName(&shellVarHead, "CWD");
         cwd =  getcwd(s, 100);
 
@@ -470,7 +487,7 @@ void echo(node *temp, char* filename, int redirect){
 
 
 
-//if showvar or showenv
+//if showvar 
 bool showLinkedList(node *temp, node *head, char* filename, int redirect){
     node *temp2;
     FILE *fp;
@@ -508,7 +525,7 @@ bool showLinkedList(node *temp, node *head, char* filename, int redirect){
 void deleteVar(node *temp){
     if(temp != NULL){
         unsetenv(temp->value);
-        deleteNode(&shellVarHead, temp->value);
+        deleteNodeByName(&shellVarHead, temp->value);
     }else{
         printError("No variable was specified");
     }
@@ -724,6 +741,9 @@ void commands(node *head){
             dirs(file, redirectType);
 
         }
+        else if(strcmp(temp->value, "exit") == 0){
+            exit(EXIT_SUCCESS);
+        }   
         else{
             if(redirectType == 3){
                 piping(head);

@@ -7,6 +7,6 @@ char* getPROMPT();
 char* getHOME();
 char* getSHELL();
 void getTERMINAL();
-int getEXITCODE();
+char* getEXITCODE();
 bool printEnv(char* envName, char* filename, int redirect);
 char* getENV(char *input);

@@ -48,6 +48,7 @@ char *checkForRedirect(node *head, int *redirectType);
 int variableExpansion(int i, int start, char* input, node **headTemp, node **tailTemp);
 void dirs(char* filename, int redirect);
 void unset(node *temp, char* filename, int redirect); 
+void updateExitcode();
 
 bool varNameCheck(char *var);
 void findNextCommand(node **head);

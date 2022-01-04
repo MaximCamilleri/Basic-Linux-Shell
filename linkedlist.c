@@ -14,6 +14,93 @@ void insertNode(node *tail, node *newnode){
     tail->next = newnode;
 }
 
+void replaceValue(node *node, char *value){
+    free(node->value);
+    node->value = malloc(strlen(value)+1);
+    strcpy(node->value, value);
+}
+
+void addLinkedList(char *value, char *name, node** head, node** tail){
+    node *temp;
+
+    temp = createNewNode(value, name); // creats a new node with the value of placholder
+    if(*head == NULL)
+    {
+        *head = temp;
+        *tail = temp;
+    }
+    else{
+        insertNode(*tail, temp); //adds the node to the linked list 
+        *tail = temp;
+        
+    }
+}
+
+void freeNode(node* node){
+    free(node->name);
+    free(node->value);
+    free(node);
+}
+
+void deleteNodeByValue(node **head, char *value){
+    node *temp = *head;
+    node *prev = NULL;
+    while(temp != NULL){
+        if(strcmp(temp->value, value) == 0){
+            if(temp == *head){
+                if(temp->next == NULL){
+                    *head = NULL;
+                    break;
+                }else{
+                    *head = (*head)->next;
+                    break;
+                }
+            }else{
+                prev->next = temp->next;
+                break;
+            }
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+}
+
+void deleteNodeByName(node **head, char *name){
+    node *temp = *head;
+    node *prev = NULL;
+    while(temp != NULL){
+        if(strcmp(temp->name, name) == 0){
+            if(temp == *head){
+                if(temp->next == NULL){
+                    *head = NULL;
+                    break;
+                }else{
+                    *head = (*head)->next;
+                    break;
+                }
+            }else{
+                prev->next = temp->next;
+                break;
+            }
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+}
+
+void destroy(node **head){
+    node *temp = *head;
+    node *next;
+
+    while (temp != NULL)
+    {
+       next = temp->next;
+       freeNode(temp);
+       temp = next;
+    }
+    *head = NULL;
+}
+
 void printlist(node *head){
     node *temporary = head;
 
@@ -52,18 +139,7 @@ void printNameValue(node *temp, FILE *output){
     fprintf(output, "%s = %s\n", temp->name, temp->value);
 }
 
-void destroy(node **head){
-    node *temp = *head;
-    node *next;
 
-    while (temp != NULL)
-    {
-       next = temp->next;
-       freeNode(temp);
-       temp = next;
-    }
-    *head = NULL;
-}
 
 node* searchByValue(node **head, char *value){
     node *temp = *head;
@@ -89,77 +165,9 @@ node* searchByName(node **head, char *name){
     return temp;
 }
 
-void replaceValue(node *node, char *value){
-    free(node->value);
-    node->value = malloc(strlen(value)+1);
-    strcpy(node->value, value);
-}
 
-void addLinkedList(char *value, char *name, node** head, node** tail){
-    node *temp;
 
-    temp = createNewNode(value, name); // creats a new node with the value of placholder
-    if(*head == NULL)
-    {
-        *head = temp;
-        *tail = temp;
-    }
-    else{
-        insertNode(*tail, temp); //adds the node to the linked list 
-        *tail = temp;
-        
-    }
-    //freeNode(temp);
-}
 
-void deleteNode(node **head, char *value){
-    node *temp = *head;
-    node *prev = NULL;
-    while(temp != NULL){
-        if(strcmp(temp->name, value) == 0){
-            if(temp == *head){
-                if(temp->next == NULL){
-                    *head = NULL;
-                }else{
-                    *head = temp->next;
-                }
-            }else{
-                prev->next = temp->next;
-            }
-        }
-        prev = temp;
-        temp = temp->next;
-    }
-}
-
-void deleteNodeByValue(node **head, char *value){
-    node *temp = *head;
-    node *prev = NULL;
-    while(temp != NULL){
-        if(strcmp(temp->value, value) == 0){
-            if(temp == *head){
-                if(temp->next == NULL){
-                    *head = NULL;
-                    break;
-                }else{
-                    *head = (*head)->next;
-                    break;
-                }
-            }else{
-                prev->next = temp->next;
-                break;
-            }
-        }
-        prev = temp;
-        temp = temp->next;
-    }
-}
-
-void freeNode(node* node){
-    free(node->name);
-    free(node->value);
-    free(node);
-}
 
 node* copyList(node* head)
 {

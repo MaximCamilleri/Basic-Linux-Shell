@@ -18,6 +18,7 @@ void initializeEnv(node **head, node **tail){
     addLinkedList(getENV("HOME"), "HOME", head, tail);
     addLinkedList(getENV("SHELL"), "SHELL", head, tail);
     addLinkedList(ttyname(STDIN_FILENO), "TERMINAL", head, tail);
+    addLinkedList(getEXITCODE(), "EXITCODE", head, tail);
 }
 
 char* getENV(char *input){
@@ -35,8 +36,8 @@ char* getPROMPT(char *cwd){
     return prompt;
 }
 
-int getEXITCODE(){
-    int error = errno;
+char* getEXITCODE(){
+    char* error = strerror(errno);
     return error;
 }
 

@@ -19,6 +19,7 @@ void addLinkedList(char *value, char *name, node** head, node** tail);
 void printNameValues(node *head, FILE *output);
 void printNameValue(node *temp, FILE *output);
 void deleteNode(node **head, char *value);
+void deleteNodeByName(node **head, char *name);
 void insertNodeAtHead(node **head, node *newnode);
 void printValue(node *head, FILE *output);
 void deleteNodeByValue(node **head, char *value);

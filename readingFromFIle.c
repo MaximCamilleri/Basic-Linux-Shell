@@ -26,9 +26,6 @@ bool fileExecution(const char *filename){
                     counter++;
                 }
             }
-            if(ch == EOF){
-            break;
-            }
             commandExecution(line); // executes the command read from the file
             initialize(line, FILECONTENT);
             counter = 0;
