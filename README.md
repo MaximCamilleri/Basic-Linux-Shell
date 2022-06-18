@@ -4,8 +4,6 @@ the shell delimited and tokenizes the input to execute a command. Additionally,
 it internally stores a set of environment variables initialized at start-up. 
 The values of these variables are retrieved from the system kernel. These variables are:
 
-
-Markup : 
 * USER
 * HOME
 * PROMPT
