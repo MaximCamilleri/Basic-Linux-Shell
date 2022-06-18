@@ -31,7 +31,7 @@ Command      | Funciton
 
 
 If a command is run that is not an internal shell command, the shell will attempt to run it as an external command.
-The shell also supports input and output redirection through the `<` (input redirection), `>` (output redirection), `>>` (output redirection appending to the end of file) commands. 
+The shell also supports input and output redirection through the `<` (input redirection), `>` (output redirection), and `>>` (output redirection appending to the end of file) commands. 
 
 Finally, the shell also supports pipes as a way of allowing two separate processes to communicate with one another by establishing a connection between the input of one process and the output of another. 
 Example:
