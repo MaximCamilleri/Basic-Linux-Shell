@@ -1,5 +1,5 @@
 # Basic Linux Shell
-This is a basic implementation of a C shell. Coded in Linux, 
+This is a basic implementation of a Linux shell. Coded in C, 
 the shell delimits and tokenises the input to execute a command. Additionally, 
 it internally stores a set of environment variables initialised at start-up. 
 The values of these variables are retrieved from the system kernel. These variables are:
